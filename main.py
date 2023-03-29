@@ -13,15 +13,7 @@ random.shuffle(dominoPieces)
 
 gameboard = []
 drawPile = []
-player1 = []
-player2 = []
 
-while len(player1) < 7:
-    player1.append(dominoPieces.pop())
-while len(player2) < 7:
-    player2.append(dominoPieces.pop())
-print(player1) 
-print(player2) 
 
 
 class Player:
@@ -35,5 +27,25 @@ class Player:
     def pickUpFromPile(self,drawPile):
         self.hand.append(drawPile.pop())
 
+def main():
+    print("Welcome to Domino  Glory")
+    print()
+    play = input("Would you to play? Y or N").upper()
+    if play == 'Y':
+        player1 = Player()
+        player2 = Player()
+        while len(player1.hand) < 7:
+            player1.hand.append(dominoPieces.pop())
+        while len(player2.hand) < 7:
+            player2.hand.append(dominoPieces.pop())
+        player1.hand.sort()
+        player2.hand.sort()
+        print(player1.hand)
+        print(player2.hand)
+
+    else:
+        return "Good bye!"
+
+main()
 
 print(len(dominoPieces))
