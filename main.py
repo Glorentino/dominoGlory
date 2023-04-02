@@ -36,35 +36,47 @@ class Player:
         if choice == 'P': #If player decides to pick up
             self.pickUpFromPile()
             self.showHand() # Shows new hand
-            choice = input("What is your choice?: ")
-            while choice not in "0123456789S": # After picking up, they can make a choice to make a move or Skip
+            # Check to see if user has any playable pieces
+            playable = False
+            for start, end in self.hand: # O(n) will chance to binary search
+                if (end == gameboard[0][0] or start == gameboard[0][0] or
+                    start == gameboard[-1][1] or end == gameboard[-1][1]):
+                    playable = True
+            if playable == True:
                 choice = input("What is your choice?: ")
-        if choice == "S": # Skip
-            return     
+                while choice not in "0123456789": # After picking up, they can make a choice to make a move or Skip
+                    choice = input("What is your choice?: ")
+            else:
+                return "Skip"
+
         # We're making a move   
         choice = int(choice)    
-        while int(choice) not in range(self.hand):
-            choice = int(input(f"What is your choice?0-{str(len(self.hand)-1)}: "))
-        if choice in range(len(self.hand)):
+        while not (choice in range(self.hand) or self.hand[choice][0] == gameboard[0][0] or self.hand[choice][1] == gameboard[0][0] or
+            self.hand[choice][0] == gameboard[-1][1] or self.hand[choice][1] == gameboard[-1][1]):
+            print("Invalid")
+            choice = int(input("What is your choice?: "))
+            if choice == "S": # Skip
+                return "Skip"
+            
+        dominoSide = input("which side? 0 or 1")
+        loc = input(f"Where would you like to play {choice}?: N o S")
+        while dominoSide not in "01":
             dominoSide = input("which side? 0 or 1")
-            loc = input(f"Where would you like to play {choice}?: N o S")
-            while dominoSide not in "01":
-                dominoSide = input("which side? 0 or 1")
-            while loc not in "NS":
-                    loc = input(f"Where would you like to play {choice}?: N o S")
-            
-            
-            if loc == "N":
-                if dominoSide == "1":
-                    self.hand[choice] = self.hand[choice][::-1] 
-                gameboard.insert(0, self.hand.pop(choice))
-            elif loc == "S":
-                if dominoSide == "1":
-                    self.hand[choice] = self.hand[choice][::-1] 
-                gameboard.insert(0, self.hand.pop(choice))
+        while loc not in "NS":
+                loc = input(f"Where would you like to play {choice}?: N o S")
+        
+        if loc == "N":
+            if dominoSide == "1":
+                self.hand[choice] = self.hand[choice][::-1] 
+            gameboard.insert(0, self.hand.pop(choice))
+        elif loc == "S":
+            if dominoSide == "1":
+                self.hand[choice] = self.hand[choice][::-1] 
+            gameboard.insert(0, self.hand.pop(choice))
         return 
     def pickUpFromPile(self,drawPile):
-        self.hand.append(drawPile.pop())
+        if len(drawPile) > 0:
+            self.hand.append(drawPile.pop())
 
 
 def main():
@@ -94,7 +106,7 @@ def main():
             else:
                 first = player2
                 second = player1
-        
+        print(f"{first} goes first!")
         # while len(first.hand) > 0 and len(second.hand) > 0:
         #     break
         if len(first.hand) == 0:
